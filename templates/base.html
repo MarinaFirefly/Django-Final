@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/b146557da1.js"></script>
+    <title>Cinema</title>
+</head>
+
+<body style="background-color: rgb(54, 54, 54)">
+<header style="width:100%">
+    <div class="row"
+         style="background-color: rgb(100, 0, 0); color: white; padding:10px;">
+        <div class="row" style="font-size:40px; width:100%; text-align:center;">
+            <div class="col-1"></div>
+            <div class="col-10" style="letter-spacing:15px; font-weight:bold;">CINEMA FOR YOUR JOY!</div>
+            <div class="col-1"></div>
+        </div>
+        <div class="row" style="font-size:20px; width:100%; color: rgb(250, 208, 208);">
+
+            <div class="col-9" style="text-align:center;">
+                {% if request.user.is_authenticated %}
+                Hi {{user.username}}! You are logged in
+                {% if request.user.is_superuser %}
+                as admin.
+                {% else %}
+                as customer. Your wallet is {{user.wallet}} florens.
+                {% endif %}
+                {% else %}
+                You aren't authorized! To buy tickets or view history you must login!
+                {% endif %}
+
+            </div>
+            <div class="col-3" style="text-align:center;">
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'logout' %}">Log out</a>
+                {% else %}
+                {% if request.path == '/login/' %}
+                <a href="{% url 'registration' %}">To registration</a>
+                {% elif request.path == '/registration/' %}
+                <a href="{% url 'login' %}">To login</a>
+                {% else %}
+                <a href="{% url 'registration' %}">Register</a>
+                <a href="{% url 'login' %}">Login</a>
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+<hr>
+<div style="text-align:left; font-size: 20px; border:2px solid rgb(100, 0, 0); border-radius:10px;
+    margin: 0 50px 0 50px; width:93%; position:fixed; top:175px; bottom:12%; height:370px;
+    background-image: url(https://english-skype.net/wp-content/uploads/2019/07/Teaser-Cinema-1200-500.jpg);">
+    {% block content %}
+    {% endblock %}
+</div>
+<div class="row"
+     style="padding:20px; rgb(100, 0, 0); text-align:center; font-size: 20px; position: fixed; width: 100%; top: 88%; bottom: 3%">
+    <div class="col-6">
+        <a href="{% url 'index' %}">To main page</a>
+        <a href="{% url 'list_films' %}">To films</a>
+        <a href="{% url 'list_rooms' %}">To rooms</a>
+    </div>
+    <div class="col-6">
+        {% if request.user.is_superuser %}
+        <a href="{% url 'create_seance' %}">New seance</a>
+        <a href="{% url 'create_film' %}">New film</a>
+        <a href="{% url 'create_room' %}">New room</a>
+        {% endif %}
+    </div>
+    {% block links %}
+    {% endblock%}
+</div>
+<footer class="footer"
+        style="color: white; text-align: center; background-color: rgb(100, 0, 0); position: fixed; width: 100%; top: 97%; bottom: 0%">
+    <p></p>
+</footer>
+</body>
+
+</html>

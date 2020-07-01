@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="background-color:white; border:2px solid rgb(100, 0, 0); border-radius:10px;">
+    <div class="row">
+        <div class="col-1"></div>
+        <div class="col-4">
+            <form method="get" action="">
+                <input placeholder="search by film"
+                       {{ search_form.film }}
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        <div class="col-4"></div>
+        <div class="col-2">
+            <form method="get" action="">
+                {{ ordering_form.order }}
+                <button type="submit">Order</button>
+            </form>
+        </div>
+    </div>
+    <hr/>
+    <div class="row" style="font:28px bold; ">
+        <div class="col-2">Movie</div>
+        <div class="col-1">Price</div>
+        <div class="col-2">Start</div>
+        <div class="col-2">End</div>
+        <div class="col-1">Room</div>
+        <div class="col-1">Free</div>
+        <div class="col-3"></div>
+    </div>
+    <hr/>
+    {% for object in page_obj %}
+    <div class="row">
+        <div class="col-2">{{object.film}}</div>
+        <div class="col-1">{{object.price}}</div>
+        <div class="col-2" style="font-size:17px">
+            {{object.start_time}}
+        </div>
+        <div class="col-2" style="font-size:17px">
+            {{object.end_time}}
+        </div>
+        <div class="col-1">{{object.room}}</div>
+        <div class="col-1">{{object.left_sits}}</div>
+        <div class="col-3">
+            {% if request.user.is_superuser %}
+            <form method="post" action="{% url 'update_seance' object.id %}">
+                {% csrf_token %}
+                <button><i class="fas fa-edit"></i></button>
+            </form>
+            {% elif request.user.is_authenticated %}
+            <form method="post" action="{% url 'create_purchase' %}">
+                <div class="row">
+                    <div class="col-8">
+                        {% csrf_token %}
+                        <input size="3" {{ purchase_form.cnt_of_tickets }}
+                               {{ purchase_form.seance.as_hidden }}
+                        <input type="hidden" value="{{object.id}}" name="seance" id="id_seance">
+                    </div>
+                    <div class="col-4">
+                        <input type="submit" value="Buy">
+                    </div>
+                </div>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+    </div>
+</div>
+{% endblock %}
+{% block links %}
+{% endblock%}

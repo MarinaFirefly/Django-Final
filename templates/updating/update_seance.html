@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="background-color:white; border:2px solid rgb(100, 0, 0); border-radius:10px; padding:20px;">
+    <div style="text-align:center">You cannot update movie and amount of booked sits!
+        <p>Movie: {{object.film}}</p>
+    </div>
+
+    <form action="{% url 'update_seance' object.id %}" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="row" style="padding:5px; height:50px;">
+            <div class="col-1"></div>
+            <div class="col-3">
+                {{field.label}}:
+            </div>
+            <div class="col-8" style="height:50px;">
+                {{field}}
+            </div>
+        </div>
+        {% endfor %}
+        <div class="row" style="padding:20px 0 0 0;">
+            <div class="col-1"></div>
+            <div class="col-10">
+                <input type="submit" value="Update">
+            </div>
+            <div class="col-1"></div>
+        </div>
+    </form>
+</div>
+{% endblock %}

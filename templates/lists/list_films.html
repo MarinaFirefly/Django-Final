@@ -1,0 +1,26 @@
+{% extends '../base.html' %}
+
+{% block content %}
+<div style="background-color:white; border:2px solid rgb(100, 0, 0); border-radius:10px; margin: 100px; padding:20px;">
+    <div class="row" style="font:28px bold;">
+        <div class="col-10">Name</div>
+        <div class="col-2"></div>
+    </div>
+    <hr>
+    {% for object in page_obj %}
+    <div class="row">
+        <div class="col-10">{{object.title}}</div>
+        <div class="col-2">
+            {% if request.user.is_superuser %}
+            <form method="post" action="{% url 'update_film' object.id %}">
+                {% csrf_token %}
+                <button><i class="fas fa-edit"></i></button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+{% block links %}
+{% endblock%}
