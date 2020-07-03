@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'cinema',
     'authentication',
     'rest_framework',
-    'rest_framework.authtoken',
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
@@ -51,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'authentication.middleware_logout.SessionLogoutMiddleware'
 ]
 
 ROOT_URLCONF = 'final.urls'
@@ -107,7 +108,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-    ]
+    ],
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',)
 }
 
 # Internationalization
@@ -135,5 +138,5 @@ AUTH_USER_MODEL = 'authentication.Customer'
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/'
 
-SESSION_COOKIE_AGE = 300
-SESSION_SAVE_EVERY_REQUEST = 'True'
+# SESSION_COOKIE_AGE = 300
+# SESSION_SAVE_EVERY_REQUEST = 'True'

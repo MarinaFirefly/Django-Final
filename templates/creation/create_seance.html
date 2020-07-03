@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div style="margin:10px 150px 10px 150px; padding:5px; background-color: white; font-size: 18px; border:2px solid rgb(100, 0, 0); border-radius:10px;">
+<div style="margin:0 150px 0 150px; padding:2px; background-color: white; font-size: 18px;
+border:2px solid rgb(100, 0, 0); border-radius:10px; font-size:18px;">
     <form action="{% url 'create_seance' %}" method="post">
         {% csrf_token %}
         {% for field in form %}
@@ -14,23 +15,9 @@
                 {{field}}
             </div>
         </div>
-         {% endfor %}
-<!--        <div class="row" style="padding:2px; height:40px;">-->
-<!--            <div class="col-1"></div>-->
-<!--            <div class="col-3">-->
-<!--                period:-->
-<!--            </div>-->
-<!--            <div class="col-4" style="height:40px;">-->
-<!--                Starts:-->
-<!--                <input type="date">-->
-<!--            </div>-->
-<!--            <div class="col-4" style="height:40px;">-->
-<!--                Ends-->
-<!--                <input type="date">-->
-<!--            </div>-->
-<!--        </div>-->
+        {% endfor %}
 
-        <div class="row" style="padding:20px 0 0 0;">
+        <div class="row" style="padding:10px 0 0 0;">
             <div class="col-1"></div>
             <div class="col-10">
                 <input type="submit" value="Create"

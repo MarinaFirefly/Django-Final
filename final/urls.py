@@ -16,10 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
+from rest_framework import routers
 
 from authentication.views import Login, Logout, Registration
 import cinema.views as cls
 from rest_framework.authtoken import views
+from API.resorces import FilmViewSet, PurchaseViewSet
+
+router = routers.DefaultRouter()
+router.register(r'api-films', FilmViewSet)
+router.register(r'api-purchases', PurchaseViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -42,4 +48,5 @@ urlpatterns = [
 
     path('api-auth/', include('rest_framework.urls')),
     path('api-token-auth/', views.obtain_auth_token),
+    path('', include(router.urls)),
 ]

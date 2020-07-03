@@ -30,9 +30,13 @@ class SearchBoxForm(forms.Form):
     film = forms.CharField()
 
 
+class SearchBoxFormStart(forms.Form):
+    start_day = forms.CharField()
+
+
 ORDER = (
     ('price', 'By price'),
-    ('start_time', 'By start')
+    ('', 'By start')
 )
 
 

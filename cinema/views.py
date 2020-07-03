@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, FormView, ListView, DeleteView, TemplateView, View, UpdateView
-from cinema.forms import RoomForm, SeanceForm, SearchBoxForm, OrderingForm, FilmForm, PurchaseForm
+from cinema.forms import RoomForm, SeanceForm, SearchBoxForm, SearchBoxFormStart, OrderingForm, FilmForm, PurchaseForm
 from cinema.models import Film, Purchase, Room, Seance
 
 
@@ -15,7 +15,7 @@ class SuperuserTestMixin(UserPassesTestMixin):
             return True
 
 
-#CLASSES FOR FETCHING LISTS OF INSTANCES
+# CLASSES FOR FETCHING LISTS OF INSTANCES
 class RoomsListView(ListView):
     model = Room
     paginate_by = 3
@@ -50,15 +50,19 @@ class SeancesListView(ListView):
     model = Seance
     paginate_by = 5
     template_name = 'index.html'
-    queryset = Seance.objects.filter(start_time=timezone.now().date())
+    queryset = Seance.objects.filter(start_day__gte=timezone.now().date())
 
     def get_queryset(self):
-        search = self.request.GET.get('film')
+        search_film = self.request.GET.get('film')
+        search_day = self.request.GET.get('start_day')
         order = self.request.GET.get('order')
-        if search:
-            query = Q(film__title__icontains=search)
+        if search_film:
+            query = Q(film__title__icontains=search_film)
             return self.queryset.filter(query)
-        if order in ['price', 'start_time']:
+        if search_day:
+            query = Q(start_day__icontains=search_day)
+            return self.queryset.filter(query)
+        if order in ['price', 'start_day']:
             return self.queryset.order_by(order)
         else:
             return self.queryset
@@ -66,15 +70,16 @@ class SeancesListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
-            {   'seance_form': SeanceForm,
-                'search_form': SearchBoxForm,
-                'ordering_form': OrderingForm,
-                'purchase_form': PurchaseForm,
+            {'seance_form': SeanceForm,
+             'search_form_film': SearchBoxForm,
+             'search_form_day': SearchBoxFormStart,
+             'ordering_form': OrderingForm,
+             'purchase_form': PurchaseForm,
              })
         return context
 
 
-#CLASSES FOR CREATING INSTANCES
+# CLASSES FOR CREATING INSTANCES
 class SeanceCreateView(SuperuserTestMixin, CreateView):
     model = Seance
     template_name = 'creation/create_seance.html'
@@ -93,7 +98,8 @@ class SeanceCreateView(SuperuserTestMixin, CreateView):
                 """)
         seances = Seance.objects.filter(room__title=obj.room.title)
         check_all_times = \
-            [s for s in seances if (obj.start_time and obj.end_time < s.start_time) or obj.start_time > s.end_time]
+            [s for s in seances if (obj.start_day == s.start_day or obj.end_day == s.end_day)
+             and (obj.end_time > s.start_time) or obj.start_time < s.end_time]
         if len(check_all_times) != len(seances):
             return HttpResponse("""Seance for this time already exist!
                 <a href = '../create_seance'>Try again</a>
@@ -116,7 +122,7 @@ class FilmCreateView(SuperuserTestMixin, CreateView):
     success_url = reverse_lazy('create_film')
 
 
-#CLASS FOR UPDATING INSTANCES
+# CLASS FOR UPDATING INSTANCES
 class FilmUpdateView(SuperuserTestMixin, UpdateView):
     model = Film
     template_name = 'updating/update_film.html'
@@ -182,7 +188,7 @@ class PurchaseCreateView(LoginRequiredMixin, CreateView):
             return HttpResponse("""Hey this seance has already started!
             <a href = '..'>Try again</a>
             """)
-        obj.customer.minus_wallet(obj.cnt_of_tickets*obj.seance.price)
+        obj.customer.minus_wallet(obj.cnt_of_tickets * obj.seance.price)
         obj.seance.book_tickets(obj.cnt_of_tickets)
         self.object = obj.save()
         return super().form_valid(form)

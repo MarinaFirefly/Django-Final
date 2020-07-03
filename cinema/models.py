@@ -22,8 +22,10 @@ class Film(models.Model):
 
 class Seance(models.Model):
     film = models.ForeignKey(Film, on_delete=models.CASCADE)
-    start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    start_day = models.DateField()
+    end_day = models.DateField()
     price = models.DecimalField(max_digits=6, decimal_places=2)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     booked_sits = models.PositiveIntegerField(default=0) #number of booked sits before selling
@@ -38,11 +40,14 @@ class Seance(models.Model):
 
     @property
     def conflict_time(self):
-        return self.start_time > self.end_time
+        return self.start_time > self.end_time and self.start_day >= self.end_day
 
     @property
     def conflict_time_start(self):
-        return self.start_time < timezone.now()
+        return self.start_time < timezone.now().time() or self.start_day < timezone.now().date()
+
+    class Meta:
+        ordering = ['start_day', 'start_time']
 
 
 class Purchase(models.Model):
@@ -62,7 +67,7 @@ class Purchase(models.Model):
 
     @property
     def conflict_time_start(self):
-        return self.seance.start_time < timezone.now()
+        return self.seance.start_time < timezone.now().time() and self.seance.start_day <= timezone.now().date()
 
     class Meta:
         ordering = ['-create_at']

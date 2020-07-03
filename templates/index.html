@@ -7,11 +7,18 @@
         <div class="col-4">
             <form method="get" action="">
                 <input placeholder="search by film"
-                       {{ search_form.film }}
+                       {{ search_form_film.film }}
                 <button type="submit">Search</button>
             </form>
         </div>
-        <div class="col-4"></div>
+        <div class="col-4">
+            <form method="get" action="">
+                <input placeholder="search by day"
+                       {{ search_form_day.start_day }}
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
         <div class="col-2">
             <form method="get" action="">
                 {{ ordering_form.order }}
@@ -34,10 +41,16 @@
     <div class="row">
         <div class="col-2">{{object.film}}</div>
         <div class="col-1">{{object.price}}</div>
-        <div class="col-2" style="font-size:17px">
+        <div class="col-1" style="font-size:15px">
+            {{object.start_day|date:"SHORT_DATE_FORMAT"}}
+        </div>
+        <div class="col-1" style="font-size:17px">
             {{object.start_time}}
         </div>
-        <div class="col-2" style="font-size:17px">
+        <div class="col-1" style="font-size:15px">
+            {{object.end_day|date:"SHORT_DATE_FORMAT"}}
+        </div>
+        <div class="col-1" style="font-size:17px">
             {{object.end_time}}
         </div>
         <div class="col-1">{{object.room}}</div>
