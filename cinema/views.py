@@ -156,7 +156,9 @@ class SeanceUpdateView(SuperuserTestMixin, UpdateView):
                 """)
         seances = Seance.objects.filter(room__title=obj.room.title)
         check_all_times = \
-            [s for s in seances if (obj.start_time and obj.end_time < s.start_time) or obj.start_time > s.end_time]
+            [s for s in seances
+             if ((obj.end_time < s.start_time or obj.start_time > s.end_time) and obj.start_day == s.start_day)
+             or obj.start_day != s.start_day]
         if len(check_all_times) != len(seances):
             return HttpResponse("""Seance for this time already exist!
                 <a href = '../..'>Try again</a>
@@ -192,3 +194,9 @@ class PurchaseCreateView(LoginRequiredMixin, CreateView):
         obj.seance.book_tickets(obj.cnt_of_tickets)
         self.object = obj.save()
         return super().form_valid(form)
+
+
+class SeanceDeleteView(SuperuserTestMixin, DeleteView):
+    http_method_names = ['post', ]
+    success_url = reverse_lazy('index')
+    model = Seance

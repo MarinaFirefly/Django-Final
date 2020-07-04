@@ -5,7 +5,7 @@ from cinema.models import Film, Purchase, Room, Seance
 class SeanceForm(forms.ModelForm):
     class Meta:
         model = Seance
-        fields = '__all__'
+        fields = ['film', 'start_time', 'end_time', 'start_day', 'end_day', 'price', 'room', 'booked_sits']
 
 
 class RoomForm(forms.ModelForm):

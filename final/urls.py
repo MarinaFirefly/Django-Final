@@ -46,6 +46,8 @@ urlpatterns = [
     path('update_room/<int:pk>/', cls.RoomUpdateView.as_view(), name='update_room'),
     path('update_film/<int:pk>/', cls.FilmUpdateView.as_view(), name='update_film'),
 
+    path('delete_seance/<int:pk>/', cls.SeanceDeleteView.as_view(), name='delete_seance'),
+
     path('api-auth/', include('rest_framework.urls')),
     path('api-token-auth/', views.obtain_auth_token),
     path('', include(router.urls)),

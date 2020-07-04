@@ -18,3 +18,8 @@ class PurchaseViewSet(mixins.ListModelMixin, GenericViewSet):
     serializer_class = PurchaseSerializer
     queryset = Purchase.objects.all()
     permission_classes = [IsAuthenticated, ]
+
+    def get_serializer_class(self):
+        if self.request.method.lower() == 'get':
+            return PurchaseSerializer
+        return super().get_serializer_class()

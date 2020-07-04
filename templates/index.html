@@ -37,6 +37,16 @@
         <div class="col-3"></div>
     </div>
     <hr/>
+    <div class="row">
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
     {% for object in page_obj %}
     <div class="row">
         <div class="col-2">{{object.film}}</div>
@@ -57,10 +67,20 @@
         <div class="col-1">{{object.left_sits}}</div>
         <div class="col-3">
             {% if request.user.is_superuser %}
-            <form method="post" action="{% url 'update_seance' object.id %}">
-                {% csrf_token %}
-                <button><i class="fas fa-edit"></i></button>
-            </form>
+            <div class="row">
+                <div class="col-6">
+                    <form method="post" action="{% url 'update_seance' object.id %}">
+                        {% csrf_token %}
+                        <button><i class="fas fa-edit"></i></button>
+                    </form>
+                </div>
+                <div class="col-6">
+                    <form method="post" action="{% url 'delete_seance' object.id %}">
+                        {% csrf_token %}
+                        <button><i class="fa fa-trash"></i></button>
+                    </form>
+                </div>
+            </div>
             {% elif request.user.is_authenticated %}
             <form method="post" action="{% url 'create_purchase' %}">
                 <div class="row">
